@@ -87,3 +87,56 @@ AgentScope 使用 `asyncio` 实现异步：
 - Tool 自定义进阶
 - Memory 系统（短期/长期）
 - RAG 集成
+
+## 通用概念迁移（适用于其他框架）
+
+### Agent 核心公式（所有框架通用）
+
+```
+Agent = LLM + Memory + Tools + Planning
+```
+
+这个公式适用于：
+- AgentScope
+- LangChain
+- AutoGen
+- Dify
+- 自研系统
+
+### 概念对照表
+
+| AgentScope | LangChain | AutoGen | 通用概念 |
+|-----------|-----------|---------|---------|
+| ReActAgent | AgentExecutor | ConversableAgent | Agent 基础类 |
+| InMemoryMemory | ConversationBufferMemory | - | 对话历史 |
+| Toolkit | Tools | - | 工具调用 |
+| MsgHub | - | GroupChat | 多 Agent 通信 |
+| Workflow | LCEL | GroupChat Manager | 流程编排 |
+
+### 学习 AgentScope 的通用价值
+
+1. **ReAct 模式**：推理+行动，所有 Agent 核心模式
+2. **工具调用**：Function Calling，LLM 通用能力
+3. **记忆管理**：短期/长期记忆，所有对话系统需要
+4. **多 Agent 协作**：团队工作模式，复杂系统必备
+5. **规划能力**：任务分解与执行，高级 Agent 能力
+
+### 迁移到其他框架的技巧
+
+理解本质 → 学习 API → 快速上手
+
+示例：
+```python
+# AgentScope
+agent = ReActAgent(sys_prompt="...", model=..., toolkit=...)
+
+# LangChain（概念相同，API 不同）
+agent = AgentExecutor.from_agent_and_tools(
+    agent=..., tools=..., memory=...
+)
+
+# AutoGen
+agent = ConversableAgent(
+    name="...", system_message="...", llm_config=...
+)
+```

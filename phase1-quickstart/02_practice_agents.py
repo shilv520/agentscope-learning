@@ -4,37 +4,49 @@
 
 练习目标：
 1. 修改 sys_prompt 创建不同角色
-2. 添加自定义工具
+2. 添加自定义工具（普通函数即可）
 3. 观察 Agent 的行为变化
 
 练习任务：
 - 任务1：创建一个"翻译助手" Agent
 - 任务2：创建一个"代码助手" Agent
-- 任务3：添加一个自定义工具
+- 任务3：添加自定义工具函数
 """
 
 import asyncio
 import os
-from typing import Annotated
+from datetime import datetime
 
 from agentscope.agent import ReActAgent, UserAgent
 from agentscope.formatter import DashScopeChatFormatter
 from agentscope.memory import InMemoryMemory
 from agentscope.model import DashScopeChatModel
-from agentscope.tool import Toolkit, tool_function, execute_python_code, execute_shell_command
+from agentscope.tool import Toolkit, execute_python_code, execute_shell_command
 
 
 # ========== 自定义工具示例 ==========
-@tool_function
-def get_current_time() -> Annotated[str, "返回当前时间"]:
-    """获取当前日期和时间"""
-    from datetime import datetime
+# 注意：自定义工具就是普通函数，不需要装饰器
+# AgentScope 会根据函数签名和 docstring 自动生成 JSON schema
+
+def get_current_time() -> str:
+    """获取当前日期和时间。
+
+    Returns:
+        当前时间的字符串，格式为 YYYY-MM-DD HH:MM:SS
+    """
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-@tool_function
-def calculate(expression: Annotated[str, "数学表达式，如 '2+3*4'"]) -> str:
-    """计算数学表达式"""
+def calculate(expression: str) -> str:
+    """计算数学表达式。
+
+    Args:
+        expression (`str`):
+            数学表达式，如 '2+3*4' 或 '(10+5)*2'
+
+    Returns:
+        计算结果的字符串描述
+    """
     try:
         result = eval(expression)
         return f"计算结果: {expression} = {result}"
